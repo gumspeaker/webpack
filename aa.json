@@ -1,0 +1,89 @@
+{
+  "id": "7137635553444464390",
+  "name_key": "ec_center_new_creator_guide_add_products_first_add_modal_text_2",
+  "start_time": 1663088400,
+  "end_time": 1663779600,
+  "is_parent": true,
+  "parent_id": "0",
+  "dmp_set_ids": "",
+  "task_extra": {
+    "cycle_times": 1,
+    "edit_location": "1"
+  },
+  "reward_group": {},
+  "task_status": 1,
+  "userName": "xuzhihao.7749",
+  "name": "For more sales, try requesting a sample from the seller.",
+  "creator_num": 0,
+  "completed_task_creator_num": {
+    "0": 0
+  },
+  "task_type": 1,
+  "is_cycle": false,
+  "create_time": "1661936770",
+  "task_mode": 2,
+  "task_priority": 1,
+  "issue_reward_mode": 1,
+  "pop_up": 1,
+  "sub_tasks": [
+    {
+      "id": "7137963802175211270",
+      "name_key": "",
+      "start_time": 1663088400,
+      "end_time": 1663779600,
+      "is_parent": false,
+      "parent_id": "7137635553444464390",
+      "dmp_set_ids": "",
+      "task_condition": [
+        {
+          "id": "7137963802175244038",
+          "tag_value": "effect_video_post_times",
+          "val_from": "111",
+          "op_from": 3,
+          "val_to": "",
+          "unit": "",
+          "tag_desc_key": "",
+          "link": "aweme://openRecord",
+          "condition_extra": "{}",
+          "is_deleted": false
+        }
+      ],
+      "task_extra": {
+        "cycle_times": 1
+      },
+      "reward_group": {
+        "group_id": "7137635553444497158",
+        "group_name": "",
+        "rewards": [
+          {
+            "id": "7137635553444513542",
+            "type": 3,
+            "cash_desc_key": "",
+            "cash_value": "222",
+            "reward_extra": {},
+            "is_deleted": false,
+            "issued_reward_creator_num": 0,
+            "currency_symbol": "Rp",
+            "reward_type": 3,
+            "order": 1,
+            "plan_issued_reward_creator_num": 0
+          }
+        ]
+      },
+      "task_status": 1,
+      "userName": "xuzhihao.7749",
+      "name": "subTask",
+      "creator_num": 0,
+      "completed_task_creator_num": {
+        "0": 0
+      },
+      "task_type": 1,
+      "is_cycle": false,
+      "create_time": "1661936770",
+      "task_mode": 3,
+      "task_priority": 1,
+      "issue_reward_mode": 1,
+      "pop_up": 1
+    }
+  ]
+}

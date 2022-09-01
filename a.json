@@ -1,0 +1,41 @@
+{
+  "task_id": "7137635553444464390",
+  "task_name": "For more sales, try requesting a sample from the seller.",
+  "display_key": "ec_center_new_creator_guide_add_products_first_add_modal_text_2",
+  "is_cycle": false,
+  "cycle_times": 1,
+  "start_time": 1663088400,
+  "end_time": 1663779600,
+  "dmp_set_id": "",
+  "edit_location": "1",
+  "sub_tasks": [
+    {
+      "task_id": "7137963802175211270",
+      "name": "subTask",
+      "task_type": 1,
+      "task_condition": [
+        {
+          "id": "7137963802175244038",
+          "tag_value": "effect_video_post_times",
+          "val_from": "11122",
+          "op_from": 3,
+          "link": "aweme://openRecord",
+          "condition_extra": ""
+        }
+      ],
+      "task_reward_group": {
+        "rewards": [
+          {
+            "is_deleted": false,
+            "type": 4,
+            "reward_type": 3,
+            "cash_value": "222",
+            "currency_symbol": "Rp",
+            "order": 0,
+            "reward_extra": {}
+          }
+        ]
+      }
+    }
+  ]
+}

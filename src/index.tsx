@@ -1,5 +1,3 @@
 import React from "react";
-import ReactDOM from "react-dom";
-// import Demo from "./demo";
-
-ReactDOM.render(<div />, document.getElementById("container"));
+import ReactDom from "react-dom";
+ReactDom.render(<div />, document.getElementById("container"));

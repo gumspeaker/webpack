@@ -1,44 +1,70 @@
 const path = require("path");
-// const Config = require("webpack-chain");
-// const config = new Config();
-// const {} = require("webpack");
-// import path from "path";
-// import {} from "webpack";
-// config.entry("./src/index.js");
+const WebpackDevServer = require("webpack-dev-server");
+const devMode = process.env.NODE_ENV !== "production";
 module.exports = {
-  entry: "./src/index.js",
-  output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "dist"),
+  resolve: {
+    extensions: [".js", ".jsx", ".scss"],
   },
-  mode: "development",
-  optimization: {
-    usedExports: true,
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "public"),
+    },
+    compress: true,
+    port: 9000,
   },
-  // chainWebpack: (webpackConfig) => {
-  //   webpackConfig.module =
-  // },
   module: {
     rules: [
+      // ...
+      // --------
+      // SCSS ALL EXCEPT MODULES
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
-      },
-      {
-        test: /\.s[ac]ss$/i,
+        test: /\.scss$/i,
+        exclude: /\.module\.scss$/i,
         use: [
-          // 将 JS 字符串生成为 style 节点
-          "style-loader",
-          // 将 CSS 转化成 CommonJS 模块
-          "css-loader",
-          // 将 Sass 编译成 CSS
-          "sass-loader",
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+              modules: {
+                mode: "icss",
+              },
+            },
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              // sourceMap: devMode,
+            },
+          },
         ],
       },
-      // {
-      //   test: /\.(woff|woff2|eot|ttf|otf)$/i,
-      //   type: "asset/resource",
-      // },
+      // --------
+      // SCSS MODULES
+      {
+        test: /\.module\.scss$/i,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+              modules: {
+                mode: "local",
+              },
+            },
+          },
+          {
+            loader: "sass-loader",
+          },
+        ],
+      },
+      // --------
+      // ...
     ],
   },
 };

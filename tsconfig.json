@@ -4,6 +4,8 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx"
   }
 }

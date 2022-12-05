@@ -1,5 +1,6 @@
 import _ from "lodash-es";
 import style from "./style/index.scss";
+// import "./style/index.css";
 function component() {
   const element = document.createElement("div");
 
@@ -7,7 +8,8 @@ function component() {
   // lodash 在当前 script 中使用 import 引入
   element.innerHTML = _.join(["Hello", "webpack"], " ");
   console.log(style);
-  element.className = style.demo;
+  element.className = "demo";
   return element;
 }
+
 document.body.appendChild(component());

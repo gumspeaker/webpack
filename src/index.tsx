@@ -1,8 +1,10 @@
-import _ from "lodash-es";
+import { join } from "lodash-es";
 import React from "react";
 // @ts-ignore
 import a from "./style/index.module.scss";
 import { createRoot } from "react-dom/client";
+import { useEffect } from "react";
+import { useState } from "react";
 // import "./style/index.css";
 // function component() {
 //   const element = document.createElement("div");
@@ -18,7 +20,19 @@ import { createRoot } from "react-dom/client";
 console.log(a);
 
 const App = () => {
-  return <div className={a.demo}>121213</div>;
+  useEffect(() => {
+    console.log(111232);
+  }, []);
+  return (
+    <div className={a.demo}>
+      {join(["Hello", "webpack"], " ")}
+      <Button></Button>
+    </div>
+  );
 };
-const root = createRoot(document.querySelector("#container"));
+const Button = () => {
+  const [a, setA] = useState(0);
+  return <button onClick={() => setA(a + 1)}>{a}</button>;
+};
+const root = createRoot(document.querySelector("#container")!);
 root.render(<App />);

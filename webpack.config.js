@@ -19,7 +19,6 @@ const sassLoader = {
 const styleLoader = {
   loader: "style-loader",
 };
-console.log(devMode, "devMode");
 
 module.exports = {
   resolve: {
@@ -59,25 +58,6 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: "swc-loader",
-          options: {
-            env: { mode: "usage" },
-            jsc: {
-              parser: {
-                syntax: "typescript",
-                tsx: true,
-                dynamicImport: true,
-              },
-              transform: {
-                react: {
-                  // swc-loader will check whether webpack mode is 'development'
-                  // and set this automatically starting from 0.1.13. You could also set it yourself.
-                  // swc won't enable fast refresh when development is false
-                  runtime: "automatic",
-                  refresh: devMode,
-                },
-              },
-            },
-          },
         },
       },
       {

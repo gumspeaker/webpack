@@ -20,7 +20,7 @@ const styleLoader = {
 };
 module.exports = {
   resolve: {
-    extensions: [".tsx", ".ts", ".jsx", ".js", ".scss"],
+    extensions: [".tsx", ".js", ".ts", ".jsx"],
   },
   context: path.resolve(__dirname, "src"),
   entry: {
@@ -45,7 +45,8 @@ module.exports = {
     rules: [
       // SCSS ALL EXCEPT MODULES
       {
-        test: /\.((j|t)(s|sx))$/,
+        // test: /\.((j|t)(s|sx))$/,
+        test: /\.((j|t)s(x?))$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: "swc-loader",
@@ -53,6 +54,7 @@ module.exports = {
       },
       {
         test: /\.(sa|sc|c)ss$/i,
+        exclude: /\.module\.(sa|sc|c)ss$/i,
         use: [
           styleLoader,
           {

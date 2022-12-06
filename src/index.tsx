@@ -18,7 +18,7 @@ import { createRoot } from "react-dom/client";
 console.log(a);
 
 const App = () => {
-  return <div>121213</div>;
+  return <div className={a.demo}>121213</div>;
 };
 const root = createRoot(document.querySelector("#container"));
 root.render(<App />);

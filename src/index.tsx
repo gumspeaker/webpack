@@ -32,7 +32,7 @@ const App = () => {
 };
 const Button = () => {
   const [a, setA] = useState(0);
-  return <button onClick={() => setA(a + 1)}>{a}</button>;
+  return <button onClick={() => setA(a + 1)}>{a}1122222222</button>;
 };
 const root = createRoot(document.querySelector("#container")!);
 root.render(<App />);

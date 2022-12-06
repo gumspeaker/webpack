@@ -1,29 +1,60 @@
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackDevServer = require("webpack-dev-server");
 const devMode = process.env.NODE_ENV !== "production";
+const postCssLoader = {
+  loader: "postcss-loader",
+  options: {
+    postcssOptions: {
+      plugins: [
+        "postcss-preset-env", // 能解决大多数样式兼容性问题
+      ],
+    },
+  },
+};
+const sassLoader = {
+  loader: "sass-loader",
+};
+const styleLoader = {
+  loader: "style-loader",
+};
 module.exports = {
   resolve: {
-    extensions: [".js", ".jsx", ".scss"],
+    extensions: [".tsx", ".ts", ".jsx", ".js", ".scss"],
+  },
+  context: path.resolve(__dirname, "src"),
+  entry: {
+    index: "./index",
   },
   devServer: {
-    static: {
-      directory: path.join(__dirname, "public"),
-    },
+    host: "localhost",
+    port: 3000,
+    hot: true,
     compress: true,
-    port: 9000,
+    historyApiFallback: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
   },
+  // mode: devMode ? "production" : "development",
+  // devtool: devMode ? "source-map" : "cheap-module-source-map",
   module: {
     rules: [
-      // ...
-      // --------
       // SCSS ALL EXCEPT MODULES
       {
-        test: /\.scss$/i,
-        exclude: /\.module\.scss$/i,
+        test: /\.((j|t)(s|sx))$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "swc-loader",
+        },
+      },
+      {
+        test: /\.(sa|sc|c)ss$/i,
         use: [
-          {
-            loader: "style-loader",
-          },
+          styleLoader,
           {
             loader: "css-loader",
             options: {
@@ -33,22 +64,15 @@ module.exports = {
               },
             },
           },
-          {
-            loader: "sass-loader",
-            options: {
-              // sourceMap: devMode,
-            },
-          },
+          // postCssLoader,
+          sassLoader,
         ],
       },
-      // --------
       // SCSS MODULES
       {
-        test: /\.module\.scss$/i,
+        test: /\.module\.(sa|sc|c)ss$/i,
         use: [
-          {
-            loader: "style-loader",
-          },
+          styleLoader,
           {
             loader: "css-loader",
             options: {
@@ -58,13 +82,15 @@ module.exports = {
               },
             },
           },
-          {
-            loader: "sass-loader",
-          },
+          // postCssLoader,
+          sassLoader,
         ],
       },
-      // --------
-      // ...
     ],
   },
+  // plugins: [
+  //   new HtmlWebpackPlugin({
+  //     template: path.resolve(__dirname, "/public/index.html"),
+  //   }),
+  // ],
 };

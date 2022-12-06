@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
 const devMode = process.env.NODE_ENV !== "production";
 const postCssLoader = {
   loader: "postcss-loader",
@@ -43,8 +44,6 @@ module.exports = {
   devServer: {
     port: 3000,
     hot: true,
-    // compress: true,
-    // historyApiFallback: true,
     client: {
       overlay: false,
     },
@@ -89,6 +88,7 @@ module.exports = {
               importLoaders: 1,
               modules: {
                 mode: "local",
+                getLocalIdent: getCSSModuleLocalIdent,
               },
             },
           },
@@ -141,11 +141,8 @@ module.exports = {
 
   plugins: [
     devMode && new ReactRefreshWebpackPlugin(),
-    // new ForkTsCheckerWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "/public/index.html"),
     }),
-    // devMode && new webpack.HotModuleReplacementPlugin(), // 作用：HMR插件将HMR Runtime代码嵌入到bundle中，能够操作APP代码，完成代码替换
-    // new webpack.NoEmitOnErrorsPlugin(),
   ].filter(Boolean),
 };

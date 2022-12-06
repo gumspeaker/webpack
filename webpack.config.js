@@ -50,8 +50,8 @@ module.exports = {
       overlay: false,
     },
   },
-  mode: devMode ? "production" : "development",
-  devtool: devMode ? "source-map" : "cheap-module-source-map",
+  mode: devMode ? "development" : "production",
+  devtool: devMode ? "cheap-module-source-map" : "source-map",
   module: {
     rules: [
       {

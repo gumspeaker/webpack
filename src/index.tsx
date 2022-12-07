@@ -2,7 +2,7 @@ import { join } from "lodash-es";
 // @ts-ignore
 import a from "./style/index.module.scss";
 import { createRoot } from "react-dom/client";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Demo from "./component/Demo";
 
@@ -25,4 +25,8 @@ const Button = () => {
   return <button onClick={() => setA(a + 1)}>{a}</button>;
 };
 const root = createRoot(document.querySelector("#container")!);
-root.render(<App />);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

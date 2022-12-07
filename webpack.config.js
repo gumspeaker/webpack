@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
-const devMode = process.env.NODE_ENV !== "production";
+const createEnvironmentHash = require("./config/hash");
 const postCssLoader = {
   loader: "postcss-loader",
   options: {
@@ -20,129 +20,160 @@ const sassLoader = {
 const styleLoader = {
   loader: "style-loader",
 };
+const rootPath = path.resolve(__dirname);
+const contextPath = path.resolve(rootPath, "src");
+const distPath = path.resolve(rootPath, "./dist");
+const tempPath = path.resolve(rootPath, "/public/index.html");
+/**
+ * @type { import('webpack').Configuration }
+ */
+module.exports = () => {
+  const isEnvDevelopment = process.env.NODE_ENV === "production";
+  const isEnvProduction = process.env.NODE_ENV === "production";
 
-module.exports = {
-  resolve: {
-    extensions: [".tsx", ".js", ".ts", ".jsx"],
-  },
-  target: "web",
-  context: path.resolve(__dirname, "src"),
-  entry: {
-    index: "./index",
-  },
-  output: {
-    path: devMode ? path.resolve(__dirname, "../dist") : undefined,
-    filename: devMode
-      ? "static/js/[name].[contenthash:10].js"
-      : "static/js/[name].js",
-    chunkFilename: devMode
-      ? "static/js/[name].[contenthash:10].chunk.js"
-      : "static/js/[name].chunk.js",
-    assetModuleFilename: "static/js/[hash:10][ext][query]",
-    clean: true,
-  },
-  devServer: {
-    port: 3000,
-    hot: true,
-    client: {
-      overlay: false,
+  return {
+    resolve: {
+      extensions: [".tsx", ".js", ".ts", ".jsx"],
     },
-  },
-  mode: devMode ? "development" : "production",
-  devtool: devMode ? "cheap-module-source-map" : "source-map",
-  module: {
-    rules: [
-      {
-        test: /\.((j|t)s(x?))$/,
-        exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: "swc-loader",
-        },
+    target: "web",
+    context: contextPath,
+    entry: {
+      index: "./index",
+    },
+    output: {
+      path: isEnvDevelopment ? distPath : undefined,
+      filename: isEnvDevelopment
+        ? "static/js/[name].[contenthash:10].js"
+        : "static/js/[name].js",
+      chunkFilename: isEnvDevelopment
+        ? "static/js/[name].[contenthash:10].chunk.js"
+        : "static/js/[name].chunk.js",
+      assetModuleFilename: "static/js/[hash:10][ext][query]",
+      clean: true,
+    },
+    devServer: {
+      port: 3000,
+      hot: true,
+      client: {
+        overlay: false,
       },
-      {
-        test: /\.(sa|sc|c)ss$/i,
-        exclude: /\.module\.(sa|sc|c)ss$/i,
-        use: [
-          styleLoader,
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: {
-                mode: "icss",
+    },
+    // cache: {
+    //   type: "filesystem",
+    //   // version: createEnvironmentHash(env.raw),
+    //   cacheDirectory: "node_modules/.cache",
+    //   store: "pack",
+    //   buildDependencies: {
+    //     defaultWebpack: ["webpack/lib/"],
+    //     // config: [__filename],
+    //   },
+    // },
+    mode: isEnvDevelopment ? "development" : "production",
+    devtool: isEnvDevelopment ? "cheap-module-source-map" : "source-map",
+    module: {
+      rules: [
+        {
+          oneOf: [
+            {
+              test: /\.((j|t)s(x?))$/,
+              exclude: /(node_modules|bower_components)/,
+              use: {
+                loader: "swc-loader",
               },
             },
-          },
-          postCssLoader,
-          sassLoader,
-        ],
-      },
-      // SCSS MODULES
-      {
-        test: /\.module\.(sa|sc|c)ss$/i,
-        use: [
-          styleLoader,
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: {
-                mode: "local",
-                getLocalIdent: getCSSModuleLocalIdent,
+            {
+              test: /\.(sa|sc|c)ss$/i,
+              exclude: /\.module\.(sa|sc|c)ss$/i,
+              use: [
+                styleLoader,
+                {
+                  loader: "css-loader",
+                  options: {
+                    importLoaders: 1,
+                    modules: {
+                      mode: "icss",
+                    },
+                  },
+                },
+                postCssLoader,
+                sassLoader,
+              ],
+            },
+            // SCSS MODULES
+            {
+              test: /\.module\.(sa|sc|c)ss$/i,
+              use: [
+                styleLoader,
+                {
+                  loader: "css-loader",
+                  options: {
+                    importLoaders: 1,
+                    modules: {
+                      mode: "local",
+                      getLocalIdent: getCSSModuleLocalIdent,
+                    },
+                  },
+                },
+                postCssLoader,
+                sassLoader,
+              ],
+            },
+            {
+              test: /\.(png|jpe?g|gif|svg)$/,
+              type: "asset",
+              parser: {
+                dataUrlCondition: {
+                  maxSize: 10 * 1024, // 小于10kb的图片会被base64处理
+                },
               },
             },
+            {
+              test: /\.(ttf|woff2?)$/,
+              type: "asset/resource",
+            },
+            {
+              // Exclude `js` files to keep "css" loader working as it injects
+              // by webpacks internal loaders.
+              exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              type: "asset/resource",
+            },
+          ],
+        },
+      ],
+    },
+    optimization: {
+      usedExports: true,
+      sideEffects: true,
+      splitChunks: {
+        chunks: "all",
+        cacheGroups: {
+          react: {
+            test: /[\\/]node_modules[\\/]react(.*)?[\\/]/,
+            name: "chunk-react",
+            priority: 40,
           },
-          postCssLoader,
-          sassLoader,
-        ],
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg)$/,
-        type: "asset",
-        parser: {
-          dataUrlCondition: {
-            maxSize: 10 * 1024, // 小于10kb的图片会被base64处理
+          antd: {
+            test: /[\\/]node_modules[\\/]antd[\\/]/,
+            name: "chunk-antd",
+            priority: 30,
+          },
+          libs: {
+            test: /[\\/]node_modules[\\/]/,
+            name: "chunk-libs",
+            priority: 20,
           },
         },
       },
-      {
-        test: /\.(ttf|woff2?)$/,
-        type: "asset/resource",
-      },
-    ],
-  },
-  optimization: {
-    usedExports: true,
-    sideEffects: true,
-    splitChunks: {
-      chunks: "all",
-      cacheGroups: {
-        react: {
-          test: /[\\/]node_modules[\\/]react(.*)?[\\/]/,
-          name: "chunk-react",
-          priority: 40,
-        },
-        antd: {
-          test: /[\\/]node_modules[\\/]antd[\\/]/,
-          name: "chunk-antd",
-          priority: 30,
-        },
-        libs: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "chunk-libs",
-          priority: 20,
-        },
+      runtimeChunk: {
+        name: (entrypoint) => `runtime~${entrypoint.name}`,
       },
     },
-    runtimeChunk: {
-      name: (entrypoint) => `runtime~${entrypoint.name}`,
-    },
-  },
 
-  plugins: [
-    devMode && new ReactRefreshWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "/public/index.html"),
-    }),
-  ].filter(Boolean),
+    plugins: [
+      isEnvDevelopment && new ReactRefreshWebpackPlugin(),
+      new HtmlWebpackPlugin({
+        template: tempPath,
+      }),
+    ].filter(Boolean),
+  };
 };

@@ -5,15 +5,9 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_ENV=production webpack --config webpack.config.js",
-    "dev": "NODE_ENV=development webpack serve --config webpack.config.js --mode development --env development  --hot"
+    "build": "NODE_ENV=production webpack --config ./config/webpack.config.js",
+    "dev": "NODE_ENV=development webpack serve --config ./config/webpack.config.js --mode development --env development  --hot"
   },
-  "sideEffects": [
-    "*.scss",
-    "*.sass",
-    "*.less",
-    "*.css"
-  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -27,6 +21,7 @@
     "@babel/core": "^7.20.5",
     "@babel/preset-env": "^7.20.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
+    "@svgr/webpack": "^6.5.1",
     "@swc/core": "^1.3.21",
     "@types/lodash-es": "^4.17.6",
     "@types/react": "^18.0.25",

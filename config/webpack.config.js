@@ -29,7 +29,7 @@ const tempPath = path.resolve(appDirectory, "/public/index.html");
  * @type { import('webpack').Configuration }
  */
 module.exports = () => {
-  const isEnvDevelopment = process.env.NODE_ENV === "production";
+  const isEnvDevelopment = process.env.NODE_ENV === "development";
   const isEnvProduction = process.env.NODE_ENV === "production";
 
   return {
@@ -43,14 +43,22 @@ module.exports = () => {
     },
     output: {
       path: isEnvDevelopment ? distPath : undefined,
-      filename: isEnvDevelopment
+      filename: isEnvProduction
         ? "static/js/[name].[contenthash:10].js"
         : "static/js/[name].js",
-      chunkFilename: isEnvDevelopment
+      chunkFilename: isEnvProduction
         ? "static/js/[name].[contenthash:10].chunk.js"
         : "static/js/[name].chunk.js",
       assetModuleFilename: "static/js/[hash:10][ext][query]",
       clean: true,
+      devtoolModuleFilenameTemplate: isEnvProduction
+        ? (info) =>
+            path
+              .relative(appDirectory, info.absoluteResourcePath)
+              .replace(/\\/g, "/")
+        : isEnvDevelopment &&
+          ((info) =>
+            path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")),
     },
     devServer: {
       port: 3000,
@@ -83,6 +91,32 @@ module.exports = () => {
               },
             },
             {
+              test: /\.svg$/,
+              use: [
+                {
+                  loader: require.resolve("@svgr/webpack"),
+                  options: {
+                    prettier: false,
+                    svgo: false,
+                    svgoConfig: {
+                      plugins: [{ removeViewBox: false }],
+                    },
+                    titleProp: true,
+                    ref: true,
+                  },
+                },
+                {
+                  loader: require.resolve("file-loader"),
+                  options: {
+                    name: "static/media/[name].[hash].[ext]",
+                  },
+                },
+              ],
+              issuer: {
+                and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+              },
+            },
+            {
               test: /\.(sa|sc|c)ss$/i,
               exclude: /\.module\.(sa|sc|c)ss$/i,
               use: [
@@ -99,6 +133,7 @@ module.exports = () => {
                 postCssLoader,
                 sassLoader,
               ],
+              sideEffects: true,
             },
             // SCSS MODULES
             {
@@ -143,6 +178,8 @@ module.exports = () => {
       ],
     },
     optimization: {
+      minimize: isEnvProduction,
+      minimizer: [],
       usedExports: true,
       sideEffects: true,
       splitChunks: {

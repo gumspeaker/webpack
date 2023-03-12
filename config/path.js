@@ -1,5 +1,4 @@
 "use strict";
-
 const path = require("path");
 const fs = require("fs");
 const getPublicUrlOrPath = require("react-dev-utils/getPublicUrlOrPath");
@@ -63,6 +62,8 @@ module.exports = {
   appTsBuildInfoFile: resolveApp("node_modules/.cache/tsconfig.tsbuildinfo"),
   swSrc: resolveModule(resolveApp, "src/service-worker"),
   publicUrlOrPath,
+  appDirectory,
+  contextPath: path.resolve(appDirectory, "src"),
+  distPath: path.resolve(appDirectory, "./dist"),
 };
-
 module.exports.moduleFileExtensions = moduleFileExtensions;

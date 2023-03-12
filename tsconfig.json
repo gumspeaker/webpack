@@ -6,7 +6,16 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "outDir": "./dist/",
+    "target": "es5",
+    "allowJs": true
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   },
   "include": ["./src/**/*"],
   "exclude": []

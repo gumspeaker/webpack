@@ -4,6 +4,14 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
+const createEnvironmentHash = require("./hash");
+const {
+  appDirectory,
+  appHtml,
+  appSrc,
+  distPath,
+  appTsConfig,
+} = require("./path");
 const postCssLoader = {
   loader: "postcss-loader",
   options: {
@@ -20,33 +28,37 @@ const sassLoader = {
 const styleLoader = {
   loader: "style-loader",
 };
-
+function getTSLoaderOptions() {
+  const tscConfig = require(appTsConfig);
+  const options = {
+    // Just for simplicity, not all the values in tscConfig are compilerOptions
+    compilerOptions: { ...tscConfig },
+  };
+  if (tscConfig.project) {
+    options.configFile = tscConfig.project;
+  }
+  return options;
+}
 /**
  * @return { import('webpack').Configuration }
  */
 module.exports = (_, config) => {
   const isEnvDevelopment = config.mode === "development";
-  const isEnvProduction = process.mode === "production";
+  const isEnvProduction = config.mode === "production";
   console.log(isEnvDevelopment, isEnvProduction);
 
   return {
     resolve: {
       extensions: [".tsx", ".js", ".ts", ".jsx"],
     },
-    target: "web",
-    context: contextPath,
+    // target: "web",
+    context: appSrc,
     entry: {
-      index: "./index",
+      index: "./export",
     },
     output: {
       path: isEnvDevelopment ? distPath : undefined,
-      filename: isEnvProduction
-        ? "static/js/[name].[contenthash:10].js"
-        : "static/js/[name].js",
-      chunkFilename: isEnvProduction
-        ? "static/js/[name].[contenthash:10].chunk.js"
-        : "static/js/[name].chunk.js",
-      assetModuleFilename: "static/js/[hash:10][ext][query]",
+      assetModuleFilename: "static/js/[name][ext]",
       clean: true,
       devtoolModuleFilenameTemplate: isEnvProduction
         ? (info) =>
@@ -64,16 +76,6 @@ module.exports = (_, config) => {
         overlay: false,
       },
     },
-    // cache: {
-    //   type: "filesystem",
-    //   // version: createEnvironmentHash(env.raw),
-    //   cacheDirectory: "node_modules/.cache",
-    //   store: "pack",
-    //   buildDependencies: {
-    //     defaultWebpack: ["webpack/lib/"],
-    //     // config: [__filename],
-    //   },
-    // },
     mode: isEnvDevelopment ? "development" : "production",
     devtool: isEnvDevelopment ? "cheap-module-source-map" : "source-map",
     module: {
@@ -83,9 +85,15 @@ module.exports = (_, config) => {
             {
               test: /\.((j|t)s(x?))$/,
               exclude: /(node_modules|bower_components)/,
-              use: {
-                loader: "swc-loader",
-              },
+              use: [
+                {
+                  loader: "swc-loader",
+                },
+                {
+                  loader: require.resolve("ts-loader"),
+                  options: getTSLoaderOptions(),
+                },
+              ],
             },
             {
               test: /\.svg$/,
@@ -174,41 +182,34 @@ module.exports = (_, config) => {
         },
       ],
     },
+    externals: [
+      {
+        react: {
+          root: "React",
+          commonjs2: "react",
+          commonjs: "react",
+          amd: "react",
+        },
+        "react-dom": {
+          root: "ReactDOM",
+          commonjs2: "react-dom",
+          commonjs: "react-dom",
+          amd: "react-dom",
+        },
+      },
+    ],
     optimization: {
       minimize: isEnvProduction,
       minimizer: [],
       usedExports: true,
       sideEffects: true,
-      splitChunks: {
-        chunks: "all",
-        cacheGroups: {
-          react: {
-            test: /[\\/]node_modules[\\/]react(.*)?[\\/]/,
-            name: "chunk-react",
-            priority: 40,
-          },
-          antd: {
-            test: /[\\/]node_modules[\\/]antd[\\/]/,
-            name: "chunk-antd",
-            priority: 30,
-          },
-          libs: {
-            test: /[\\/]node_modules[\\/]/,
-            name: "chunk-libs",
-            priority: 20,
-          },
-        },
-      },
-      runtimeChunk: {
-        name: (entrypoint) => `runtime~${entrypoint.name}`,
-      },
     },
-
     plugins: [
       isEnvDevelopment && new ReactRefreshWebpackPlugin(),
-      new HtmlWebpackPlugin({
-        template: tempPath,
-      }),
+      isEnvDevelopment &&
+        new HtmlWebpackPlugin({
+          template: appHtml,
+        }),
     ].filter(Boolean),
   };
 };

@@ -4,7 +4,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
-const { contextPath, distPath, tempPath } = require("./path")
+const { contextPath, distPath, tempPath, appBuild } = require("./path")
+
 const postCssLoader = {
   loader: "postcss-loader",
   options: {
@@ -27,7 +28,7 @@ const styleLoader = {
  */
 module.exports = (_, config) => {
   const isEnvDevelopment = config.mode === "development";
-  const isEnvProduction = process.mode === "production";
+  const isEnvProduction = config.mode === "production";
   console.log(isEnvDevelopment, isEnvProduction);
 
   return {
@@ -40,7 +41,7 @@ module.exports = (_, config) => {
       index: "./index",
     },
     output: {
-      path: isEnvDevelopment ? distPath : undefined,
+      path: isEnvDevelopment ? distPath : appBuild,
       filename: isEnvProduction
         ? "static/js/[name].[contenthash:10].js"
         : "static/js/[name].js",
@@ -49,18 +50,22 @@ module.exports = (_, config) => {
         : "static/js/[name].chunk.js",
       assetModuleFilename: "static/js/[hash:10][ext][query]",
       clean: true,
-      devtoolModuleFilenameTemplate: isEnvProduction
-        ? (info) =>
-          path
-            .relative(appDirectory, info.absoluteResourcePath)
-            .replace(/\\/g, "/")
-        : isEnvDevelopment &&
-        ((info) =>
-          path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")),
+      // devtoolModuleFilenameTemplate: isEnvProduction
+      //   ? (info) =>
+      //     path
+      //       .relative(appDirectory, info.absoluteResourcePath)
+      //       .replace(/\\/g, "/")
+      //   : isEnvDevelopment &&
+      //   ((info) =>
+      //     path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")),
     },
     devServer: {
       port: 3000,
       hot: true,
+      // contentBase: distPath,
+      devMiddleware: {
+        writeToDisk: true,
+      },
       client: {
         overlay: false,
       },

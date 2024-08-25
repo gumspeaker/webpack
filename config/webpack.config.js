@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
+const { contextPath, distPath, tempPath } = require("./path")
 const postCssLoader = {
   loader: "postcss-loader",
   options: {
@@ -50,12 +51,12 @@ module.exports = (_, config) => {
       clean: true,
       devtoolModuleFilenameTemplate: isEnvProduction
         ? (info) =>
-            path
-              .relative(appDirectory, info.absoluteResourcePath)
-              .replace(/\\/g, "/")
+          path
+            .relative(appDirectory, info.absoluteResourcePath)
+            .replace(/\\/g, "/")
         : isEnvDevelopment &&
-          ((info) =>
-            path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")),
+        ((info) =>
+          path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")),
     },
     devServer: {
       port: 3000,

@@ -24,7 +24,6 @@
         }
       }
     },
-
     "target": "es2022",
     "loose": false,
     "externalHelpers": false,
